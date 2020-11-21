@@ -64,6 +64,11 @@ public class ItemController {
 
     @PostMapping("items/{itemId}/edit")
     public String updateItem(@ModelAttribute("form") BookForm form) {
+        
+        //컨트롤러에서 함부러 엔티티 만들지 말 것
+        //트랜잭션이 있는 서비스에 필요한 정보 파라미터로 넘기거나
+        //DTO로 전달할 것
+/*
         Book book = new Book();
         book.setId(form.getId());
         book.setName(form.getName());
@@ -71,8 +76,9 @@ public class ItemController {
         book.setStockQuantity(form.getStockQuantity());
         book.setAuthor(form.getAuthor());
         book.setIsbn(form.getIsbn());
+*/
 
-        itemService.saveItem(book);
+        itemService.updateItem(form.getId(), form.getName(), form.getPrice());
         return "redirect:/items";
     }
 }
