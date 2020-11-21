@@ -48,7 +48,7 @@ public class MemberController {
         return "redirect:/";
     }
 
-    @GetMapping("memebers")
+    @GetMapping("/members")
     public String list(Model model) {
         // 여기서는 왜 DTO로 안뿌리고, 그냥 member Entity뿌림?
         // 간단하니까, 실무에서는 변환해서 뿌리는 것을 권장
