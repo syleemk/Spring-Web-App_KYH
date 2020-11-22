@@ -52,4 +52,11 @@ public class MemberService {
     public Member findOne(Long memberId){
         return memberRepository.findOne(memberId);
     }
+
+    @Transactional
+    public void update(Long id, String name) {
+        //update는 변경감지 사용하는 것이 좋음 (merge쓰지마)
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
 }
