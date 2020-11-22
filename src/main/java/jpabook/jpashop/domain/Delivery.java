@@ -8,17 +8,17 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-public class Delievery {
+public class Delivery {
 
     @Id @GeneratedValue
-    @Column(name = "delievery_id")
+    @Column(name = "delivery_id")
     private Long id;
 
     private Address address;
 
-    @OneToOne(mappedBy = "delievery")
+    @OneToOne(mappedBy = "delivery")
     private Order order;
 
     @Enumerated(EnumType.STRING)
-    private DelieveryStatus status;
+    private DeliveryStatus status;
 }

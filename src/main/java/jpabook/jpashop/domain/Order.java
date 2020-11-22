@@ -31,8 +31,8 @@ public class Order {
 
     //영속성 전이
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "delievery_id")
-    private Delievery delievery;
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
 
     private LocalDateTime orderDate;
 
@@ -51,9 +51,9 @@ public class Order {
         orderItem.setOrder(this);
     }
 
-    public void setDelievery(Delievery delievery){
-        this.delievery = delievery;
-        delievery.setOrder(this);
+    public void setDelivery(Delivery delivery){
+        this.delivery = delivery;
+        delivery.setOrder(this);
     }
 
     //==생성 메서드==//
@@ -64,10 +64,10 @@ public class Order {
      * 이러한 복잡한 생성은 별도의 생성메서드가 있으면 좋음
      * 앞으로 생성하는 시점을 변경해야하면 이것만 변경하면 됨
      */
-    public static Order createOrder(Member member, Delievery delievery, OrderItem... orderItems){
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems){
         Order order = new Order();
         order.setMember(member);
-        order.setDelievery(delievery);
+        order.setDelivery(delivery);
         for (OrderItem orderItem : orderItems) {
             order.addOrderItem(orderItem);
         }
@@ -82,7 +82,7 @@ public class Order {
      */
     public void cancel() {
         //비즈니스 로직에 대한 체크 로직이 엔티티 안에 있음
-        if (delievery.getStatus() == DelieveryStatus.COMP) {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
             throw new IllegalStateException("이미 배송 완료된 상품은 취소가 불가능합니다.");
         }
 

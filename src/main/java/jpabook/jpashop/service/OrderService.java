@@ -1,6 +1,6 @@
 package jpabook.jpashop.service;
 
-import jpabook.jpashop.domain.Delievery;
+import jpabook.jpashop.domain.Delivery;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
@@ -10,7 +10,6 @@ import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,14 +35,14 @@ public class OrderService {
         Item item = itemRepository.findOne(itemId);
         
         //배송정보 생성 (여기서는 간단화하기위해 그냥 회원의 주소 정보 가져옴)
-        Delievery delievery = new Delievery();
-        delievery.setAddress((member.getAddress()));
+        Delivery delivery = new Delivery();
+        delivery.setAddress((member.getAddress()));
 
         //주문상품 생성 (생성메서드 사용), 예제 단순화위해 주문상품 하나만 넘기도록 함
         OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
 
         //주문 생성
-        Order order = Order.createOrder(member, delievery, orderItem);
+        Order order = Order.createOrder(member, delivery, orderItem);
 
         //주문 저장
         orderRepository.save(order);

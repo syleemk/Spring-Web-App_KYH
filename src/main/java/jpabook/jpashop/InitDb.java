@@ -49,8 +49,8 @@ public class InitDb {
             OrderItem orderItem1 = OrderItem.createOrderItem(book1, 10000, 1);
             OrderItem orderItem2 = OrderItem.createOrderItem(book2, 20000, 2);
 
-            Delievery delievery = createDelievery(member);
-            Order order = Order.createOrder(member, delievery, orderItem1, orderItem2);
+            Delivery delivery = createDelivery(member);
+            Order order = Order.createOrder(member, delivery, orderItem1, orderItem2);
             em.persist(order);
         }
 
@@ -75,15 +75,15 @@ public class InitDb {
             OrderItem orderItem1 = OrderItem.createOrderItem(book1, 20000, 3);
             OrderItem orderItem2 = OrderItem.createOrderItem(book2, 40000, 4);
 
-            Delievery delievery = createDelievery(member);
-            Order order = Order.createOrder(member, delievery, orderItem1, orderItem2);
+            Delivery delivery = createDelivery(member);
+            Order order = Order.createOrder(member, delivery, orderItem1, orderItem2);
             em.persist(order);
         }
 
-        private Delievery createDelievery(Member member) {
-            Delievery delievery = new Delievery();
-            delievery.setAddress(member.getAddress());
-            return delievery;
+        private Delivery createDelivery(Member member) {
+            Delivery delivery = new Delivery();
+            delivery.setAddress(member.getAddress());
+            return delivery;
         }
 
         private Member createMember(String name, String city, String street, String s) {
