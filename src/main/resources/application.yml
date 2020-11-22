@@ -18,4 +18,4 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug # 로거를 통해서 출력
-    org.hibernate.type: trace # 쿼리파라미터 로그를 남김
+#    org.hibernate.type: trace # 쿼리파라미터 로그를 남김
