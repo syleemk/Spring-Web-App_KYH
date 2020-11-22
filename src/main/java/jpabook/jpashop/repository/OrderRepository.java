@@ -101,4 +101,19 @@ public class OrderRepository {
                         "join fetch o.delivery d ", Order.class
         ).getResultList();
     }
+
+    public List<Order> findAllWithItem() {
+        /**
+         * xToMany 컬렉션 페치 조인시
+         * 중복되는 엔티티가 컬렉션에 들어간다
+         * 중복없이 조회하고 싶다면 distinct 키워드 넣어줘라!
+         */
+        return em.createQuery(
+                "select distinct o from Order o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d " + //member와 delivery는 xToOne join이라 데이터 뻥튀기 안됨
+                        "join fetch o.orderItems oi " +
+                        "join fetch oi.item i", Order.class
+        ).getResultList();
+    }
 }
