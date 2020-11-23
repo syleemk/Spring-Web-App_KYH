@@ -6,9 +6,14 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
+import jpabook.jpashop.repository.order.query.OrderQueryDto;
+import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -19,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiController {
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     /**
      * 엔티티 직접 노출
@@ -61,6 +67,58 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllWithItem();
         return orders.stream()
                 .map(OrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * xToMany 컬렉션 조회 페이징 한계돌파
+     */
+    @GetMapping("/api/v3.1/orders") // 오프셋은 몇번째 페이지부터 시작할지 나타냄
+    public List<OrderDto> ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        //xToOne은 그냥 fetch 조인으로 가져오면 됨
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+
+        //지연로딩 최적화 안됨
+        return orders.stream()
+                .map(OrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 컬렉션을 jpa에서 dto로 직접 조회
+     */
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> ordersV4() {
+        return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    /**
+     * 컬렉션 dto 조회
+     * in절을 통해 성능 최적화
+     */
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
+    }
+
+    /**
+     * 플랫 데이터 최적화
+     * order, orderitem, item을 다 조인해서 flat한 데이터를
+     * 한방쿼리로 가져옴
+     */
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        //OrderFlatDto가 아닌 OrderQueryDto로 api spec을 맞추고싶음
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+        //데이터를 다 돌면서 직접 발라내면 됨 ㅋㅋㅋㅋ
+        return flats.stream() // OrderQueryDto를 key로, OrderItemQueryDto를 value로
+                //groupby로 묶어줄려면 기준이 필요, OrderQueryDto에 equalsandhashcode 어노테이션 통해 기준 생성
+                .collect(Collectors.groupingBy(o->new OrderQueryDto(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        Collectors.mapping(o->new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), Collectors.toList())
+                )).entrySet().stream()// 여기서 orderItemList 채워주는 로직
+                .map(e->new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
                 .collect(Collectors.toList());
     }
 
