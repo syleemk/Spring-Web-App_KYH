@@ -50,13 +50,16 @@ public class MemberService {
     }
 
     public Member findOne(Long memberId){
-        return memberRepository.findOne(memberId);
+        //return memberRepository.findOne(memberId);
+        //스프링 데이터 JPA사용
+        return memberRepository.findById(memberId).get();
     }
 
     @Transactional
     public void update(Long id, String name) {
         //update는 변경감지 사용하는 것이 좋음 (merge쓰지마)
-        Member member = memberRepository.findOne(id);
+        //Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         member.setName(name);
     }
 }

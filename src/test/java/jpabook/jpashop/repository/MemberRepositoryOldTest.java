@@ -1,24 +1,19 @@
 package jpabook.jpashop.repository;
 
-import jpabook.jpashop.domain.Member;
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.Assert.*;
 
 //Junit한테 스프링과 관련된 테스트한다고 알려주는 어노테이션
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Rollback(value = false)
-public class MemberRepositoryTest {
+public class MemberRepositoryOldTest {
 
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MemberRepositoryOld memberRepositoryOld;
 /*
     @Test
     @Transactional // 엔티티매니저를 통한 데이터변경은 트랜잭션안에서 이루어져야함
