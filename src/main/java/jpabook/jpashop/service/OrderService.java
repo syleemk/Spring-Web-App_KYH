@@ -58,8 +58,8 @@ public class OrderService {
         order.cancel();
     }
     
-    //검색
+    //검색 QueryDSL사용
     public List<Order> findOrders(OrderSearch orderSearch){
-        return orderRepository.findAllByString(orderSearch);
+        return orderRepository.findAll(orderSearch);
     }
 }

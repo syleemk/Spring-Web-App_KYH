@@ -1,10 +1,23 @@
+////queyrdsl 플러그인 추가를 위한 dependencies
+//buildscript {
+//	dependencies {
+//		classpath("gradle.plugin.com.ewerk.gradle.plugins:querydslplugin: 1.0.10")
+//	}
+//}
+
 plugins {
 	//스프링 부트 플러그인이 라이브러리에 대한 버전관리까지 다 해줌
 	//스프링 부트 플러그인 버전만 올려도 다른 라이브러리 버전까지 다 올라감
 	id 'org.springframework.boot' version '2.3.6.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	
+	//gradle 플러그인
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 }
+//querydsl plugin적용
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
 
 group = 'jpabook'
 version = '0.0.1-SNAPSHOT'
@@ -38,8 +51,35 @@ dependencies {
 //		Junit5로 동작하게 하는 코드
 //		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+
+	//querydsl 추가
+	implementation 'com.querydsl:querydsl-jpa'
+	//querydsl 추가
+	implementation 'com.querydsl:querydsl-apt'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+//generate된 q파일 위치 설정
+//def querydslDir = 'src/main/generated'
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	library = "com.querydsl:querydsl-apt"
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java', querydslDir]
+		}
+	}
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
 }
