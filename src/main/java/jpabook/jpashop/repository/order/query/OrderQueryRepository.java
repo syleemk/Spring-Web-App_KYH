@@ -28,7 +28,7 @@ public class OrderQueryRepository {
         //돌면서 직접 채워줌
         result.forEach(o -> {
             List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId()); // 쿼리 총 N번 나옴, N+1문제
-            o.setOrderItems((orderItems));
+            o.setOrderItems(orderItems);
         });
 
         return result;
@@ -54,7 +54,7 @@ public class OrderQueryRepository {
         //루프를 돌지않고 한방에 가져올 것임
         //위에서는 =으로 orderId를 하나씩 가져오는데, in절로 여러개를 한꺼번에 가져올 것임
         List<OrderItemQueryDto> orderItems = em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count) " +
                         "from OrderItem oi " +
                         "join oi.item i " +
                         "where oi.order.id in :orderIds", OrderItemQueryDto.class)
@@ -90,7 +90,8 @@ public class OrderQueryRepository {
     private List<OrderQueryDto> findOrders() {
         return em.createQuery(
                 //jpql에서 new메서드 인자로 컬렉션 바로 넣을 수 없음
-                "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address) from Order o " +
+                "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                        "from Order o " +
                         "join o.member m " +
                         "join o.delivery d", OrderQueryDto.class)
                 .getResultList();

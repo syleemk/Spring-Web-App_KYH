@@ -114,7 +114,7 @@ public class OrderApiController {
         List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
         //데이터를 다 돌면서 직접 발라내면 됨 ㅋㅋㅋㅋ
         return flats.stream() // OrderQueryDto를 key로, OrderItemQueryDto를 value로
-                //groupby로 묶어줄려면 기준이 필요, OrderQueryDto에 equalsandhashcode 어노테이션 통해 기준 생성
+                //groupby로 묶어줄려면 기준이 필요, OrderQueryDto에 equalsandhashcode 어노테이션 통해 기준 생성 (객체를 비교하는 기준이 있어야 객체 자체를 기준으로 세울 수 있음)
                 .collect(Collectors.groupingBy(o->new OrderQueryDto(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
                         Collectors.mapping(o->new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), Collectors.toList())
                 )).entrySet().stream()// 여기서 orderItemList 채워주는 로직
